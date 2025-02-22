@@ -121,4 +121,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 MIT License
->>>>>>> 5fda373d1e72d9b59ede255476c2fa50fd6b48ab
