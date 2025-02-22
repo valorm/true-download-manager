@@ -1,6 +1,6 @@
 # True Download Manager
 
-<<<<<<< HEAD
+
 A modern, efficient download manager built with FastAPI and React.
 
 ## Project Structure
@@ -34,7 +34,7 @@ A modern, feature-rich download manager built with FastAPI and React.
 - Beautiful and responsive UI
 - Download history and management
 - JWT authentication for secure access
->>>>>>> 5fda373d1e72d9b59ede255476c2fa50fd6b48ab
+
 
 ## Tech Stack
 
@@ -43,7 +43,6 @@ A modern, feature-rich download manager built with FastAPI and React.
 - yt-dlp (Media extraction)
 - Selenium (Web automation)
 - Celery (Background tasks)
-<<<<<<< HEAD
 - PostgreSQL (Database)
 - Redis (Message broker)
 
