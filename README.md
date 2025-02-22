@@ -1,5 +1,6 @@
 # True Download Manager
 
+<<<<<<< HEAD
 A modern, efficient download manager built with FastAPI and React.
 
 ## Project Structure
@@ -22,6 +23,18 @@ Real-time download progress via WebSocket
 Beautiful and responsive UI
 Download history and management
 JWT authentication for secure access
+=======
+A modern, feature-rich download manager built with FastAPI and React.
+
+## Features
+
+- Multi-threaded downloads for faster speed
+- Media extraction support (YouTube, social media, etc.)
+- Real-time download progress via WebSocket
+- Beautiful and responsive UI
+- Download history and management
+- JWT authentication for secure access
+>>>>>>> 5fda373d1e72d9b59ede255476c2fa50fd6b48ab
 
 ## Tech Stack
 
@@ -30,6 +43,7 @@ JWT authentication for secure access
 - yt-dlp (Media extraction)
 - Selenium (Web automation)
 - Celery (Background tasks)
+<<<<<<< HEAD
 - PostgreSQL (Database)
 - Redis (Message broker)
 
@@ -69,3 +83,43 @@ JWT authentication for secure access
 ## License
 
 MIT License
+=======
+- WebSocket (Real-time updates)
+
+### Frontend
+- React
+- Material-UI
+- WebSocket client
+
+## Setup
+
+1. Clone the repository
+2. Install backend dependencies:
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+3. Install frontend dependencies:
+   ```bash
+   cd frontend
+   npm install
+   ```
+4. Start the development servers:
+   - Backend: `uvicorn main:app --reload`
+   - Frontend: `npm start`
+
+## Docker Deployment
+
+Use Docker Compose to run all services:
+```bash
+docker-compose up
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT License
+>>>>>>> 5fda373d1e72d9b59ede255476c2fa50fd6b48ab
