@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
 
 interface User {
   username: string;
@@ -20,10 +19,22 @@ interface RegisterData {
   username: string;
   email: string;
   password: string;
-  full_name: string;
+  full_name?: string;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+const API_BASE_URL = 'http://localhost:8000';
+
+const authFetch = (input: RequestInfo | URL, init?: RequestInit) => {
+  const token = localStorage.getItem('token');
+  const headers = new Headers(init?.headers);
+
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return fetch(input, { ...init, headers });
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -41,32 +52,52 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Set axios default header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // TODO: Implement get current user endpoint
-      // getCurrentUser();
+  const getCurrentUser = async () => {
+    const response = await authFetch(`${API_BASE_URL}/me`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch user');
     }
-    setLoading(false);
+    const data = (await response.json()) as User;
+    setUser(data);
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          await getCurrentUser();
+        } catch (error) {
+          localStorage.removeItem('token');
+          setUser(null);
+        }
+      }
+      setLoading(false);
+    };
+
+    initialize();
   }, []);
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('http://localhost:8000/token', 
-        new URLSearchParams({
+      const response = await fetch(`${API_BASE_URL}/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
           username,
           password,
-        })
-      );
+        }),
+      });
 
-      const { access_token } = response.data;
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const { access_token } = (await response.json()) as { access_token: string };
       localStorage.setItem('token', access_token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      // TODO: Implement get current user endpoint
-      // await getCurrentUser();
+      await getCurrentUser();
     } catch (error) {
       throw new Error('Login failed');
     }
@@ -74,7 +105,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const register = async (userData: RegisterData) => {
     try {
-      await axios.post('http://localhost:8000/register', userData);
+      const response = await fetch(`${API_BASE_URL}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
       await login(userData.username, userData.password);
     } catch (error) {
       throw new Error('Registration failed');
@@ -83,7 +124,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logout = () => {
     localStorage.removeItem('token');
-    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
