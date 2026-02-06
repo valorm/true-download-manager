@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
-Base = declarative_base()
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+
+from database import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -18,3 +19,5 @@ class User(Base):
     full_name = Column(String, nullable=True)
     preferences = Column(String, nullable=True)  # JSON string for user preferences
     last_login = Column(DateTime, nullable=True)
+
+    downloads = relationship("Download", back_populates="user", cascade="all, delete-orphan")

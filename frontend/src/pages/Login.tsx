@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Box, Container, TextField, Button, Typography, Paper } from '@mui/material';
+import { Box, Container, TextField, Button, Typography, Paper, Alert } from '@mui/material';
 // First install react-router-dom: npm install react-router-dom @types/react-router-dom
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -20,7 +24,16 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement login logic
+    setErrorMessage('');
+    setIsSubmitting(true);
+    try {
+      await login(formData.username, formData.password);
+      navigate('/');
+    } catch (error) {
+      setErrorMessage('Unable to sign in with those credentials.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -38,16 +51,21 @@ const Login: React.FC = () => {
             Sign In
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            {errorMessage && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {errorMessage}
+              </Alert>
+            )}
             <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
               autoFocus
-              value={formData.email}
+              value={formData.username}
               onChange={handleChange}
             />
             <TextField
@@ -67,8 +85,9 @@ const Login: React.FC = () => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={isSubmitting}
             >
-              Sign In
+              {isSubmitting ? 'Signing In...' : 'Sign In'}
             </Button>
             <Button
               fullWidth
